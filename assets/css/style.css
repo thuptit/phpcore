@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-color: #5a4772;
+  --primary-color2: #fefbff;
+  --primary-color3: #31274f;
+  --light: #f8f9fa;
+}
+
+body{
+  background-color: #f8f9fa;
+}
+
+header {
+  height: 60px;
+  display: block;
+  background-color: white;
+  color: var(--primary-color3);
+}
+
+.btn-contact {
+  background-color: var(--primary-color);
+  color: var(--primary-color2);
+  width: 12rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}
+
+.text-home {
+  color: var(--primary-color3);
+}
+.logo {
+  display: flex;
+  flex-grow: 0.35;
+  justify-content: center;
+}
+
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .show > .nav-link {
+  color: var(--primary-color) !important;
+  font-weight: 500;
+}
+.navbar-light .navbar-nav .nav-link {
+  color: var(--primary-color3);
+  font-weight: 500;
+}
+header .navbar .navbar-nav li{
+    margin-right: 2.5rem;
+}
+header .navbar .navbar-nav li a::before {
+  position: absolute;
+  bottom: 10px;
+  content: "";
+  height: 2px;
+  width: 0;
+  background-color: #31274f;
+  -webkit-transition: width 300ms ease-in-out;
+  -o-transition: width 300ms ease-in-out;
+  transition: width 300ms ease-in-out;
+}
+header .navbar .navbar-nav li a.active::before,
+header .navbar .navbar-nav li a:hover::before,
+header .navbar .navbar-nav li a:hover::before {
+  background-color: var(--primary-color3);
+  width: 2rem;
+}
+.navbar_fixed {
+  background-color: var(--primary-color2);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+ transition: all .5s ease;
+}
+
+.border-right{
+  border-right: 1px solid var(--primary-color);
+}
+
+.bg-login{
+  background-color: var(--primary-color);
+}
+
+#card1:hover, #card2:hover, #card3:hover, #card4:hover{
+  transform: translateY(-15px);
+}
+#card1, #card2, #card3, #card4{
+  transition: all .4s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#services{
+  margin-top: 4rem;
+}
+
+.btn-trial{
+  border: 1px solid #925add;
+  color: #925add;
+}
+.btn-trial:hover{
+  background-color: #925add;
+  color: #f8f9fa;
+}
+.contact{
+  position: relative;
+  background-color: var(--primary-color2);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-size: cover;
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+  color: #000;
+}
+.btn-send{
+  background-color: var(--primary-color);
+}
+
