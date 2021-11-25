@@ -18,35 +18,68 @@ $(document).ready(function () {
   navbarFixed();
 });
 
-async function getDropDownCustomer() {
+async function getDropDownCustomer(id = '-1') {
+  console.log(id)
   $("#slCustomer").children().remove();
-  $("#slCustomer").append("<option selected disabled>Chọn khách hàng</option>");
+  $("#eCustomer").children().remove();
+  if(id == '-1'){
+    $("#slCustomer").append("<option selected disabled>Chọn khách hàng</option>");
+  }
   return $.ajax({
     url: "/orderpurephp/business_logics/customers/CustomersDropDown.php",
     type: "GET",
     success: (res) => {
       let data = JSON.parse(res);
       data.forEach((item) => {
-        $("#slCustomer").append(
-          `<option value='${item.id}'>${item.name}</option>`
-        );
+        if(id != '-1'){
+          if(item.id == id){
+            $("#eCustomer").append(
+              `<option value='${item.id}' selected>${item.name}</option>`
+            );
+          }
+          else
+            $("#eCustomer").append(
+              `<option value='${item.id}' >${item.name}</option>`
+            );
+        }
+        else{
+          $("#slCustomer").append(
+            `<option value='${item.id}'>${item.name}</option>`
+          );
+        }
       });
     },
   });
 }
 
-async function getDropDownProduct() {
+async function getDropDownProduct(id = -1) {
+  console.log(id)
   $("#slProduct").children().remove();
-  $("#slProduct").append("<option selected disabled>Chọn khách hàng</option>");
+  $("#eProduct").children().remove();
+  if(id == -1)
+    $("#slProduct").append("<option selected disabled>Chọn khách hàng</option>");
   return $.ajax({
     url: "/orderpurephp/business_logics/products/ProductsDropDown.php",
     type: "GET",
     success: (res) => {
       let data = JSON.parse(res);
       data.forEach((item) => {
-        $("#slProduct").append(
-          `<option value='${item.id}'>${item.name}</option>`
-        );
+        if(id != -1){
+          if(item.id == id){
+            $("#eProduct").append(
+              `<option value='${item.id}' selected>${item.name}</option>`
+            );
+          }
+          else
+            $("#eProduct").append(
+              `<option value='${item.id}' >${item.name}</option>`
+            );
+        }
+        else{
+          $("#slProduct").append(
+            `<option value='${item.id}'>${item.name}</option>`
+          );
+        }
       });
     },
   });
@@ -179,20 +212,18 @@ function deleteUser(id) {
 
 function saveOrder() {
   let code = $("#slCode").val();
-  let name = $("#slName").val();
   let product = $("#slProduct").val();
   let customer = $("#slCustomer").val();
   let total = $("#slTotal").val();
   if (
     code == "" ||
-    name == "" ||
     product == "" ||
     customer == "" ||
     total == ""
   ) {
     Swal.fire({
       icon: "error",
-      title: "Xin lỗi",
+      title: "Đã xảy ra lỗi",
       text: "Bạn cần phải điền đầy đủ thông tin!",
     });
     return;
@@ -229,6 +260,7 @@ function searchOrder(page = 1) {
           let div = `<tr>
                         <td>${count}</td>
                         <td>${item.name}</td>
+                        <td><img src="${item.url}" height=100 width=100 class="img-fluid"></td>
                         <td>${item.product}</td>
                         <td>${item.customer}</td>
                         <td>${item.total}</td>
@@ -248,11 +280,9 @@ function searchOrder(page = 1) {
                               ")'></i>" +
                               "<i class='fa fa-times text-danger mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Từ chối' onclick='deny(" +
                               item.id +
-                              ")'></i>"
+                              ")'></i>"+ "<i class='fa fa-edit text-secondary mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Chỉnh sửa' onclick='editOrder("+item.id+")'></i>"
                             : ""
-                        } <i class='fa fa-edit text-secondary mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Chỉnh sửa' onclick='editUser(${
-            item.id
-          })'></i><i class='fa fa-trash text-danger mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Xóa' onclick='deleteUser(${
+                        } <i class='fa fa-trash text-danger mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Xóa' onclick='deleteOrder(${
             item.id
           })'></i></td>
                     </tr>`;
@@ -333,3 +363,74 @@ function deny(id){
   });
 }
 
+function deleteOrder(id){
+  Swal.fire({
+    title: "Bạn có chắc chắn muốn hủy bỏ đơn hàng này?",
+    text: "Bạn sẽ không thể lấy lại được dữ liệu này!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Xác nhận!",
+    cancelButtonText: "Hủy",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/orderpurephp/business_logics/orders/DeleteOrder.php",
+        data: {id: id },
+        type: 'POST',
+        success: (res)=>{
+          searchOrder();
+          toastr.success(res);
+        }
+      })
+    }
+  });
+}
+
+function editOrder(id){
+  $.ajax({
+    url: '/orderpurephp/business_logics/orders/GetOrderById.php',
+    data: {id: id},
+    type: 'POST',
+    success: async (res) =>{
+      let data = JSON.parse(res)
+      await getDropDownCustomer(data[0].customer_id);
+      await getDropDownProduct(data[0].product_id);
+      $('#eId').val(data[0].id);
+      $('#eCode').val(data[0].name);
+      $('#eTotal').val(data[0].total);
+      $('#editOrder').modal('show');
+    }
+  })
+}
+function updateOrder(){
+  let code = $("#eCode").val();
+  let product = $("#eProduct option:selected").val();
+  let customer = $("#eCustomer option:selected").val();
+  let total = $("#eTotal").val();
+  console.log(code+" " + product + " " + customer + " " + total)
+  if (
+    code == "" ||
+    product == "" ||
+    customer == "" ||
+    total == ""
+  ) {
+    Swal.fire({
+      icon: "error",
+      title: "Đã xảy ra lỗi",
+      text: "Bạn cần phải điền đầy đủ thông tin!",
+    });
+    return;
+  }
+  $.ajax({
+    url: '/orderpurephp/business_logics/orders/UpdateOrder.php',
+    data: $('#formEditOrder').serialize(),
+    type: 'POST',
+    success: (res) => {
+      searchOrder();
+      toastr.success(res);
+      $('#editOrder').modal('hide');
+    }
+  })
+}
