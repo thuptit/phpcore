@@ -5,7 +5,7 @@
     $name = $query->name;
     $phone = $query->phone;
     $email = $query->email;
-    $limit = 5;
+    $limit = 10;
     $page = 1;
     if ($_POST["page"] > 1) {
         $start = (($_POST["page"] - 1) * $limit);
