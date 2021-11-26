@@ -25,12 +25,12 @@
         <div class="col-md-6 mt-2">
             <button class="btn btn-primary" onclick="searchOrder(1)" type="button"><i class="fa fa-search"></i>Tìm kiếm</button>
             <button class="btn btn-success" onclick="createOrder();"><i class="fa fa-plus"></i> Thêm mới</button>
-            <button class="btn btn-secondary" onclick=""><i class="fa fa-file"></i> Xuất excel</button>
+            <button class="btn btn-secondary" onclick="exportTableToExcel('tblExportOrders','order')"><i class="fa fa-file"></i> Xuất excel</button>
         </div>
     </div>
     <div class="row mt-5">
         <div class="col-md-12">
-            <table class="table table-striped">
+            <table class="table table-striped" id="tblExportOrders">
                 <thead>
                     <tr>
                         <th >STT</th>

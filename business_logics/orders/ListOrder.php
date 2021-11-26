@@ -6,7 +6,7 @@
      $nameCus = $query->nameCus;
      $namePro = $query->namePro;
      $status = $query->status;
-     $limit = 20;
+     $limit = 10;
      $page = 1;
      if ($_POST["page"] > 1) {
          $start = (($_POST["page"] - 1) * $limit);

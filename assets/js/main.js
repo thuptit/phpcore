@@ -347,7 +347,7 @@ function searchOrder(page = 1) {
                         <td>${calculatorMoney(item.price,1)}</td>
                         <td class='text-success'>${calculatorMoney(item.price, item.total)}</td>
                         <td>${item.user}</td>
-                        <td>${item.createdDate}</td>
+                        <td>${convertTime(item.createdDate)}</td>
                         <td class='${
                           item.status == 0
                             ? "text-warning"
@@ -486,7 +486,7 @@ function editOrder(id) {
       $("#eId").val(data[0].id);
       $("#eCode").val(data[0].name);
       $("#eTotal").val(data[0].total);
-      $("#eDatepicker").val(data[0].createdDate);
+      $("#eDatepicker").val(convertTime(data[0].createdDate));
       $("#editOrder").modal("show");
     },
   });
@@ -496,7 +496,9 @@ function updateOrder() {
   let product = $("#eProduct option:selected").val();
   let customer = $("#eCustomer option:selected").val();
   let total = $("#eTotal").val();
-  if (code == "" || product == "" || customer == "" || total == "") {
+  let date = $('#eDatepicker').val();
+  //console.log(date);
+  if (code == "" || product == "" || customer == "" || total == "" || date == "") {
     Swal.fire({
       icon: "error",
       title: "Đã xảy ra lỗi",
@@ -516,6 +518,11 @@ function updateOrder() {
   });
 }
 
+function convertTime(date){
+  let newDate = new Date(date);
+  return (newDate.getUTCMonth() + 1)+'/'+newDate.getUTCDay()+'/'+newDate.getUTCFullYear();
+}
+
 function calculatorMoney(price, total){
   let money = parseInt(price)*parseInt(total);
   return (
@@ -523,4 +530,28 @@ function calculatorMoney(price, total){
       currency: "VND",
     }) + " VNĐ"
   );
+}
+function exportTableToExcel(tableID, filename = ''){
+  var downloadLink;
+  var dataType = 'application/vnd.ms-excel';
+  var tableSelect = document.getElementById(tableID);
+  var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+  
+  filename = filename?filename+'.xls':'excel_data.xls';
+
+  downloadLink = document.createElement("a");
+  
+  document.body.appendChild(downloadLink);
+  
+  if(navigator.msSaveOrOpenBlob){
+      var blob = new Blob(['\ufeff', tableHTML], {
+          type: dataType
+      });
+      navigator.msSaveOrOpenBlob( blob, filename);
+  }else{
+      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+  
+      downloadLink.download = filename;
+      downloadLink.click();
+  }
 }

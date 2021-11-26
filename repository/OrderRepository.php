@@ -41,7 +41,7 @@
                     and ('$model->nameProduct' is null or p.name like '%$model->nameProduct%')
                     and ($model->status = -1 or o.status = $model->status)
                     order by o.createdDate desc";
-            $filter = $sql . ' limit ' . $model->start . ' , ' . 20 . '';
+            $filter = $sql . ' limit ' . $model->start . ' , ' . 10 . '';
 
             $query = mysqli_query($this->con, $sql);
             //count record

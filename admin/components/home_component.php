@@ -1,7 +1,7 @@
 <div class="row m-5">
   <div class="col-md-12">
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-2" style="display: flex; justify-content: center; align-items: center; font-weight: bold;">
         <label for="">Thống kê đơn hàng</label>
       </div>
       <div class="col-md-2">
