@@ -29,7 +29,8 @@
              'user'  =>    $row['nameUser'],
              'status' => $row['status'],
              'total' => $row['total'],
-             'createdDate' => $row['createdDate']
+             'createdDate' => $row['createdDate'],
+             'url' => $row['url']
          );
      }
      //divide data

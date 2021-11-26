@@ -35,6 +35,7 @@
                     <tr>
                         <th >STT</th>
                         <th >Mã đơn hàng</th>
+                        <th>Hình ảnh</th>
                         <th >Tên sản phẩm</th>
                         <th>Khách hàng</th>
                         <th >Số lượng</th>
@@ -62,4 +63,7 @@
 
 <?php
     include "modal/order_modal.php";
+?>
+<?php
+    include "modal/editorder_modal.php";
 ?>

@@ -30,7 +30,7 @@
             }
         }
         public function getAll($model){
-            $sql = "select o.id, o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total
+            $sql = "select o.id, o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total, p.image as url
                         from orders as o
                         join customers as cus on cus.id = o.customer_id
                         join products as p on p.id = o.product_id
@@ -75,6 +75,38 @@
                 else{
                     return "Error: " . $sql . "<br>" . mysqli_error($this->con);
                 }
+            }
+        }
+        public function deleteOrder($id){
+            $sql = "update orders set isDeleted = 1 where id = $id";
+            $query = mysqli_query($this->con, $sql);
+            if($query){
+                return "Hủy đơn hàng thành công!";
+            }
+            else{
+                return "Error: " . $sql . "<br>" . mysqli_error($this->con);
+            }
+        }
+        public function getOrderById($id){
+            $sql = "select o.id, p.id as product_id, cus.id as customer_id,o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total
+                    from orders as o
+                    join customers as cus on cus.id = o.customer_id
+                    join products as p on p.id = o.product_id
+                    join users as u on u.id = o.user_id
+                    where o.isDeleted = 0 and o.id = $id";
+            $query = mysqli_query($this->con, $sql);
+            return $query;
+        }
+        public function updateOrder($id, $name, $customer_id, $product_id, $total){
+            $sql = "update orders 
+                    set name = '$name', customer_id = $customer_id, product_id = $product_id, total = $total 
+                    where id = $id";
+            $query = mysqli_query($this->con, $sql);
+            if($query){
+                return "Cập nhật đơn hàng thành công!";
+            }
+            else{
+                return "Error: " . $sql . "<br>" . mysqli_error($this->con);
             }
         }
     }
