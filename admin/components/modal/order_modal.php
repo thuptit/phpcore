@@ -42,6 +42,14 @@
               <input type="text" name="slTotal" id="slTotal" class="form-control">
             </div>
           </div>
+          <div class="row mt-3">
+            <div class="col-md-4">
+              <label for="">Ngày tạo</label>
+            </div>
+            <div class="col-md-8" style="position: relative;">
+              <input type="text" class="form-control " id="datepicker" name="dateCreate"/>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>

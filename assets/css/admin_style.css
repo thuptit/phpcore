@@ -128,3 +128,14 @@ footer{
 .cusor{
     cursor: pointer;
 }
+
+img.ui-datepicker-trigger{
+    position: absolute;
+    top: 4px;
+    width: 30px;
+    height: 30px;
+}
+
+#datepicker, #eDatepicker{
+    padding: 0.375rem 4rem;
+}

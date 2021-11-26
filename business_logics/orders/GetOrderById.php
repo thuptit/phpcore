@@ -9,7 +9,8 @@
             'name' => $row['name'],
             'customer_id' => $row['customer_id'],
             'product_id' => $row['product_id'],
-            'total' => $row['total']
+            'total' => $row['total'],
+            'createdDate' => $row['createdDate']
         );
     }
     echo json_encode($result);

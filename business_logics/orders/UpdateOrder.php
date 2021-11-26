@@ -6,5 +6,6 @@
     $customer_id = $_POST['eCustomer'];
     $product_id = $_POST['eProduct'];
     $total = $_POST['eTotal'];
-    echo $order->updateOrder($id, $name, $customer_id, $product_id, $total);
+    $date = $_POST['eDateCreate'];
+    echo $order->updateOrder($id, $name, $customer_id, $product_id, $total, $date);
 ?>

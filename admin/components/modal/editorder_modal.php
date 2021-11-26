@@ -31,7 +31,7 @@
               <label for="">Khách hàng</label>
             </div>
             <div class="col-md-8">
-            <select name="eCustomer" id="eCustomer" class="form-control">
+              <select name="eCustomer" id="eCustomer" class="form-control">
             </select>
             </div>
           </div>
@@ -41,6 +41,14 @@
             </div>
             <div class="col-md-8">
               <input type="text" name="eTotal" id="eTotal" class="form-control">
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-4">
+              <label for="">Ngày tạo</label>
+            </div>
+            <div class="col-md-8" style="position: relative;">
+              <input type="text" class="form-control" id="eDatepicker" name="eDateCreate"/>
             </div>
           </div>
         </div>

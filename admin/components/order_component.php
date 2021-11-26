@@ -39,6 +39,8 @@
                         <th >Tên sản phẩm</th>
                         <th>Khách hàng</th>
                         <th >Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Tổng giá</th>
                         <th >Người tạo</th>
                         <th >Ngày tạo</th>
                         <th >Trạng thái</th>
@@ -59,7 +61,7 @@
                 <div id="pagination_link" style="float: right;"></div>
             </div>
         </div>
-</div>
+    </div>
 
 <?php
     include "modal/order_modal.php";
