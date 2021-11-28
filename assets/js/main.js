@@ -136,7 +136,7 @@ async function getDropDownProduct(id = -1) {
   $("#eProduct").children().remove();
   if (id == -1)
     $("#slProduct").append(
-      "<option selected disabled>Chọn khách hàng</option>"
+      "<option selected disabled>Chọn sản phẩm</option>"
     );
   return $.ajax({
     url: "/orderpurephp/business_logics/products/ProductsDropDown.php",
@@ -347,7 +347,7 @@ function searchOrder(page = 1) {
                         <td>${calculatorMoney(item.price,1)}</td>
                         <td class='text-success'>${calculatorMoney(item.price, item.total)}</td>
                         <td>${item.user}</td>
-                        <td>${convertTime(item.createdDate)}</td>
+                        <td>${item.createdDate}</td>
                         <td class='${
                           item.status == 0
                             ? "text-warning"
@@ -486,7 +486,6 @@ function editOrder(id) {
       $("#eId").val(data[0].id);
       $("#eCode").val(data[0].name);
       $("#eTotal").val(data[0].total);
-      $("#eDatepicker").val(convertTime(data[0].createdDate));
       $("#editOrder").modal("show");
     },
   });
@@ -518,10 +517,7 @@ function updateOrder() {
   });
 }
 
-function convertTime(date){
-  let newDate = new Date(date);
-  return (newDate.getUTCMonth() + 1)+'/'+newDate.getUTCDay()+'/'+newDate.getUTCFullYear();
-}
+
 
 function calculatorMoney(price, total){
   let money = parseInt(price)*parseInt(total);

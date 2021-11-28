@@ -97,9 +97,9 @@
             $query = mysqli_query($this->con, $sql);
             return $query;
         }
-        public function updateOrder($id, $name, $customer_id, $product_id, $total, $date){
+        public function updateOrder($id, $name, $customer_id, $product_id, $total){
             $sql = "update orders 
-                    set name = '$name', customer_id = $customer_id, product_id = $product_id, total = $total, createdDate = STR_TO_DATE('$date', '%m/%d/%Y %T')
+                    set name = '$name', customer_id = $customer_id, product_id = $product_id, total = $total
                     where id = $id";
             $query = mysqli_query($this->con, $sql);
             if($query){
