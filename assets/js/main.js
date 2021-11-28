@@ -15,15 +15,96 @@ $(document).ready(function () {
   }
   searchUser(1);
   searchOrder(1);
+  dateStatistics();
   navbarFixed();
+  statisticChart();
+  formDateInput();
 });
+function dateStatistics(){
+  let dateNow = new Date();
+  for (let i = 1; i <= 12; i++) {
+    if (i == dateNow.getMonth() + 1) {
+      $("#slMonth").append(`<option value='${i}' selected>Tháng ${i}</option>`);
+      continue;
+    }
+    $("#slMonth").append(`<option value='${i}'>Tháng ${i}</option>`);
+  }
+  for (let i = 2016; i <= dateNow.getUTCFullYear(); i++) {
+    if (i == dateNow.getUTCFullYear()) {
+      $("#slYear").append(`<option value='${i}' selected>Năm ${i}</option>`);
+      continue;
+    }
+    $("#slYear").append(`<option value='${i}'>Năm ${i}</option>`);
+  }
+}
+function formDateInput(){
+  $("#datepicker").datepicker({
+    showOn: "button",
+    buttonImage: "http://localhost:25277/orderpurephp/assets/images/icon.png",
+    buttonImageOnly: true,
+    buttonText: "",
+  });
+  $("#eDatepicker").datepicker({
+    showOn: "button",
+    buttonImage: "http://localhost:25277/orderpurephp/assets/images/icon.png",
+    buttonImageOnly: true,
+    buttonText: "",
+  });
+}
 
-async function getDropDownCustomer(id = '-1') {
-  console.log(id)
+async function statisticChart() {
+  let month = $("#slMonth option:selected").val();
+  let year = $("#slYear option:selected").val();
+  let xValues = ["Chờ xác nhận", "Đã duyệt", "Từ chối"];
+  let yValues = await getData(month, year);
+  let barColors = ["#b91d47", "#00aba9", "#2b5797"];
+  new Chart("myChart1", {
+    type: "pie",
+    data: {
+      labels: xValues,
+      datasets: [
+        {
+          backgroundColor: barColors,
+          data: yValues,
+        },
+      ],
+    },
+    options: {
+      title: {
+        display: true,
+        text: `Thống kê theo tháng ${month} năm ${year}`,
+      },
+    },
+  });
+}
+
+async function getData(month, year) {
+  let yValues = [];
+  await $.ajax({
+    url: "/orderpurephp/business_logics/orders/Statistics.php",
+    data: { month: month, year: year },
+    type: "POST",
+    beforeSend: () =>{
+      $("#modalLoad").modal("show");
+    },
+    success: (res) => {
+      let data = JSON.parse(res);
+      data.forEach((item) => {
+        yValues.push(parseInt(item.total));
+      });
+      $("#modalLoad").modal("hide");
+    },
+  });
+  return yValues;
+}
+
+async function getDropDownCustomer(id = "-1") {
   $("#slCustomer").children().remove();
   $("#eCustomer").children().remove();
-  if(id == '-1'){
-    $("#slCustomer").append("<option selected disabled>Chọn khách hàng</option>");
+  if (id == "-1") {
+    $("#slCustomer").append(
+      "<option selected disabled>Chọn khách hàng</option>"
+    );
   }
   return $.ajax({
     url: "/orderpurephp/business_logics/customers/CustomersDropDown.php",
@@ -31,18 +112,16 @@ async function getDropDownCustomer(id = '-1') {
     success: (res) => {
       let data = JSON.parse(res);
       data.forEach((item) => {
-        if(id != '-1'){
-          if(item.id == id){
+        if (id != "-1") {
+          if (item.id == id) {
             $("#eCustomer").append(
               `<option value='${item.id}' selected>${item.name}</option>`
             );
-          }
-          else
+          } else
             $("#eCustomer").append(
               `<option value='${item.id}' >${item.name}</option>`
             );
-        }
-        else{
+        } else {
           $("#slCustomer").append(
             `<option value='${item.id}'>${item.name}</option>`
           );
@@ -53,29 +132,28 @@ async function getDropDownCustomer(id = '-1') {
 }
 
 async function getDropDownProduct(id = -1) {
-  console.log(id)
   $("#slProduct").children().remove();
   $("#eProduct").children().remove();
-  if(id == -1)
-    $("#slProduct").append("<option selected disabled>Chọn khách hàng</option>");
+  if (id == -1)
+    $("#slProduct").append(
+      "<option selected disabled>Chọn sản phẩm</option>"
+    );
   return $.ajax({
     url: "/orderpurephp/business_logics/products/ProductsDropDown.php",
     type: "GET",
     success: (res) => {
       let data = JSON.parse(res);
       data.forEach((item) => {
-        if(id != -1){
-          if(item.id == id){
+        if (id != -1) {
+          if (item.id == id) {
             $("#eProduct").append(
               `<option value='${item.id}' selected>${item.name}</option>`
             );
-          }
-          else
+          } else
             $("#eProduct").append(
               `<option value='${item.id}' >${item.name}</option>`
             );
-        }
-        else{
+        } else {
           $("#slProduct").append(
             `<option value='${item.id}'>${item.name}</option>`
           );
@@ -101,7 +179,7 @@ function saveUser() {
     type: "POST",
     success: function (response) {
       toastr.success(response);
-      $("#userCreate").modal("hide");
+      $("#exampleModal").modal("hide");
       searchUser();
     },
   });
@@ -117,6 +195,9 @@ function searchUser(page = 1) {
     url: "/orderpurephp/business_logics/user/ListUser.php",
     data: { page: page, query: JSON.stringify(query) },
     type: "POST",
+    beforeSend: () =>{
+      $("#modalLoad").modal("show");
+    },
     success: function (response) {
       let res = JSON.parse(response);
       if (res.data.length > 0) {
@@ -151,6 +232,7 @@ function searchUser(page = 1) {
       $("#totalRecords").html(
         `Tổng số <span class='text-primary' style='font-weight:bold; font-size: 1.25rem;'>${res.total_data}</span> kết quả tìm kiếm được`
       );
+      $("#modalLoad").modal("hide");
     },
   });
 }
@@ -215,12 +297,7 @@ function saveOrder() {
   let product = $("#slProduct").val();
   let customer = $("#slCustomer").val();
   let total = $("#slTotal").val();
-  if (
-    code == "" ||
-    product == "" ||
-    customer == "" ||
-    total == ""
-  ) {
+  if (code == "" || product == "" || customer == "" || total == "") {
     Swal.fire({
       icon: "error",
       title: "Đã xảy ra lỗi",
@@ -239,7 +316,6 @@ function saveOrder() {
   });
 }
 function searchOrder(page = 1) {
-  console.log(page);
   $("#tblOrder").children().remove();
   let query = {
     name: $("#name").val(),
@@ -250,9 +326,11 @@ function searchOrder(page = 1) {
   $.ajax({
     url: "/orderpurephp/business_logics/orders/ListOrder.php",
     data: { page: page, query: JSON.stringify(query) },
+    beforeSend: () => {
+      $("#modalLoad").modal("show");
+    },
     type: "POST",
     success: function (response) {
-      console.log(response);
       let res = JSON.parse(response);
       if (res.data.length > 0) {
         let count = 1;
@@ -260,10 +338,14 @@ function searchOrder(page = 1) {
           let div = `<tr>
                         <td>${count}</td>
                         <td>${item.name}</td>
-                        <td><img src="${item.url}" height=100 width=100 class="img-fluid"></td>
+                        <td><img src="${
+                          item.url
+                        }" height=100 width=100 class="img-fluid"></td>
                         <td>${item.product}</td>
                         <td>${item.customer}</td>
                         <td>${item.total}</td>
+                        <td>${calculatorMoney(item.price,1)}</td>
+                        <td class='text-success'>${calculatorMoney(item.price, item.total)}</td>
                         <td>${item.user}</td>
                         <td>${item.createdDate}</td>
                         <td class='${
@@ -280,7 +362,10 @@ function searchOrder(page = 1) {
                               ")'></i>" +
                               "<i class='fa fa-times text-danger mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Từ chối' onclick='deny(" +
                               item.id +
-                              ")'></i>"+ "<i class='fa fa-edit text-secondary mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Chỉnh sửa' onclick='editOrder("+item.id+")'></i>"
+                              ")'></i>" +
+                              "<i class='fa fa-edit text-secondary mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Chỉnh sửa' onclick='editOrder(" +
+                              item.id +
+                              ")'></i>"
                             : ""
                         } <i class='fa fa-trash text-danger mr-1 cusor' data-bs-toggle='tooltip' data-bs-placement='bottom' title='Xóa' onclick='deleteOrder(${
             item.id
@@ -298,6 +383,7 @@ function searchOrder(page = 1) {
       $("#totalRecords").html(
         `Tổng số <span class='text-primary' style='font-weight:bold; font-size: 1.25rem;'>${res.total_data}</span> kết quả tìm kiếm được`
       );
+      $("#modalLoad").modal("hide");
     },
   });
 }
@@ -313,7 +399,7 @@ function getStatus(code) {
   }
 }
 
-function accept(id){
+function accept(id) {
   Swal.fire({
     title: "Bạn có chắc chắn muốn duyệt đơn hàng này?",
     text: "Bạn sẽ không thể lấy lại được dữ liệu này!",
@@ -327,18 +413,18 @@ function accept(id){
     if (result.isConfirmed) {
       $.ajax({
         url: "/orderpurephp/business_logics/orders/HandleOrder.php",
-        data: {id: id, accept: 'accept'},
-        type: 'POST',
-        success: (res)=>{
+        data: { id: id, accept: "accept" },
+        type: "POST",
+        success: (res) => {
           searchOrder();
           toastr.success(res);
-        }
-      })
+        },
+      });
     }
   });
 }
 
-function deny(id){
+function deny(id) {
   Swal.fire({
     title: "Bạn có chắc chắn muốn từ chối đơn hàng này?",
     text: "Bạn sẽ không thể lấy lại được dữ liệu này!",
@@ -352,18 +438,18 @@ function deny(id){
     if (result.isConfirmed) {
       $.ajax({
         url: "/orderpurephp/business_logics/orders/HandleOrder.php",
-        data: {id: id, deny: 'deny'},
-        type: 'POST',
-        success: (res)=>{
+        data: { id: id, deny: "deny" },
+        type: "POST",
+        success: (res) => {
           searchOrder();
           toastr.success(res);
-        }
-      })
+        },
+      });
     }
   });
 }
 
-function deleteOrder(id){
+function deleteOrder(id) {
   Swal.fire({
     title: "Bạn có chắc chắn muốn hủy bỏ đơn hàng này?",
     text: "Bạn sẽ không thể lấy lại được dữ liệu này!",
@@ -377,45 +463,41 @@ function deleteOrder(id){
     if (result.isConfirmed) {
       $.ajax({
         url: "/orderpurephp/business_logics/orders/DeleteOrder.php",
-        data: {id: id },
-        type: 'POST',
-        success: (res)=>{
+        data: { id: id },
+        type: "POST",
+        success: (res) => {
           searchOrder();
           toastr.success(res);
-        }
-      })
+        },
+      });
     }
   });
 }
 
-function editOrder(id){
+function editOrder(id) {
   $.ajax({
-    url: '/orderpurephp/business_logics/orders/GetOrderById.php',
-    data: {id: id},
-    type: 'POST',
-    success: async (res) =>{
-      let data = JSON.parse(res)
+    url: "/orderpurephp/business_logics/orders/GetOrderById.php",
+    data: { id: id },
+    type: "POST",
+    success: async (res) => {
+      let data = JSON.parse(res);
       await getDropDownCustomer(data[0].customer_id);
       await getDropDownProduct(data[0].product_id);
-      $('#eId').val(data[0].id);
-      $('#eCode').val(data[0].name);
-      $('#eTotal').val(data[0].total);
-      $('#editOrder').modal('show');
-    }
-  })
+      $("#eId").val(data[0].id);
+      $("#eCode").val(data[0].name);
+      $("#eTotal").val(data[0].total);
+      $("#editOrder").modal("show");
+    },
+  });
 }
-function updateOrder(){
+function updateOrder() {
   let code = $("#eCode").val();
   let product = $("#eProduct option:selected").val();
   let customer = $("#eCustomer option:selected").val();
   let total = $("#eTotal").val();
-  console.log(code+" " + product + " " + customer + " " + total)
-  if (
-    code == "" ||
-    product == "" ||
-    customer == "" ||
-    total == ""
-  ) {
+  let date = $('#eDatepicker').val();
+  //console.log(date);
+  if (code == "" || product == "" || customer == "" || total == "" || date == "") {
     Swal.fire({
       icon: "error",
       title: "Đã xảy ra lỗi",
@@ -424,13 +506,48 @@ function updateOrder(){
     return;
   }
   $.ajax({
-    url: '/orderpurephp/business_logics/orders/UpdateOrder.php',
-    data: $('#formEditOrder').serialize(),
-    type: 'POST',
+    url: "/orderpurephp/business_logics/orders/UpdateOrder.php",
+    data: $("#formEditOrder").serialize(),
+    type: "POST",
     success: (res) => {
       searchOrder();
       toastr.success(res);
-      $('#editOrder').modal('hide');
-    }
-  })
+      $("#editOrder").modal("hide");
+    },
+  });
+}
+
+
+
+function calculatorMoney(price, total){
+  let money = parseInt(price)*parseInt(total);
+  return (
+    money.toLocaleString("vi", {
+      currency: "VND",
+    }) + " VNĐ"
+  );
+}
+function exportTableToExcel(tableID, filename = ''){
+  var downloadLink;
+  var dataType = 'application/vnd.ms-excel';
+  var tableSelect = document.getElementById(tableID);
+  var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+  
+  filename = filename?filename+'.xls':'excel_data.xls';
+
+  downloadLink = document.createElement("a");
+  
+  document.body.appendChild(downloadLink);
+  
+  if(navigator.msSaveOrOpenBlob){
+      var blob = new Blob(['\ufeff', tableHTML], {
+          type: dataType
+      });
+      navigator.msSaveOrOpenBlob( blob, filename);
+  }else{
+      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+  
+      downloadLink.download = filename;
+      downloadLink.click();
+  }
 }

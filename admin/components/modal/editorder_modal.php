@@ -31,7 +31,7 @@
               <label for="">Khách hàng</label>
             </div>
             <div class="col-md-8">
-            <select name="eCustomer" id="eCustomer" class="form-control">
+              <select name="eCustomer" id="eCustomer" class="form-control">
             </select>
             </div>
           </div>

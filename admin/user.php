@@ -23,12 +23,12 @@
             <div class="col-md-3">
                 <button class="btn btn-primary" type="button" onclick="searchUser()"><i class="fa fa-search"></i> Tìm kiếm</button>
                 <button class="btn btn-success" onclick="createUser();"><i class="fa fa-plus"></i> Thêm mới</button>
-                <button class="btn btn-secondary" onclick="window.location = '/orderpurephp/business_logics/user/ExportUser.php'"><i class="fa fa-file"></i> Xuất file</button>
+                <button class="btn btn-secondary" onclick="exportTableToExcel('tblExportUser','users')"><i class="fa fa-file"></i> Xuất file</button>
             </div>
         </div>
         <div class="row mt-5">
             <div class="col-md-12">
-                <table class="table table-striped">
+                <table class="table table-striped" id="tblExportUser">
                     <thead>
                         <tr>
                             <th scope="col">STT</th>

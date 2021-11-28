@@ -20,7 +20,7 @@
         }
         public function createOrder($model){
             $sql = "insert into orders(name, customer_id, product_id, user_id, status, createdDate, isDeleted, total)
-                    values('$model->name', $model->customer_id, $model->product_id, $model->user_id, $model->status, NOW(), 0, $model->total)";
+                    values('$model->name', $model->customer_id, $model->product_id, $model->user_id, $model->status, STR_TO_DATE('$model->createDate', '%m/%d/%Y %T'), 0, $model->total)";
             $query = mysqli_query($this->con, $sql);
             if($query){
                 return "Thêm mơi thành công";
@@ -30,17 +30,17 @@
             }
         }
         public function getAll($model){
-            $sql = "select o.id, o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total, p.image as url
-                        from orders as o
-                        join customers as cus on cus.id = o.customer_id
-                        join products as p on p.id = o.product_id
-                        join users as u on u.id = o.user_id
-                        where o.isDeleted = 0
-                        and ('$model->nameOrder' is null or o.name like '%$model->nameOrder%')
-                        and ('$model->nameCustomer' is null or cus.name like '%$model->nameCustomer%')
-                        and ('$model->nameProduct' is null or p.name like '%$model->nameProduct%')
-                        and ($model->status = -1 or o.status = $model->status)
-                        order by o.createdDate desc";
+            $sql = "select o.id, o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total, p.image as url, p.price
+                    from orders as o
+                    join customers as cus on cus.id = o.customer_id
+                    join products as p on p.id = o.product_id
+                    join users as u on u.id = o.user_id
+                    where o.isDeleted = 0
+                    and ('$model->nameOrder' is null or o.name like '%$model->nameOrder%')
+                    and ('$model->nameCustomer' is null or cus.name like '%$model->nameCustomer%')
+                    and ('$model->nameProduct' is null or p.name like '%$model->nameProduct%')
+                    and ($model->status = -1 or o.status = $model->status)
+                    order by o.createdDate desc";
             $filter = $sql . ' limit ' . $model->start . ' , ' . 10 . '';
 
             $query = mysqli_query($this->con, $sql);
@@ -88,7 +88,7 @@
             }
         }
         public function getOrderById($id){
-            $sql = "select o.id, p.id as product_id, cus.id as customer_id,o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total
+            $sql = "select o.id, p.id as product_id, cus.id as customer_id,o.name, p.name as namePro, cus.name as nameCus, u.name as nameUser, o.status, o.createdDate, o.total, p.price
                     from orders as o
                     join customers as cus on cus.id = o.customer_id
                     join products as p on p.id = o.product_id
@@ -99,7 +99,7 @@
         }
         public function updateOrder($id, $name, $customer_id, $product_id, $total){
             $sql = "update orders 
-                    set name = '$name', customer_id = $customer_id, product_id = $product_id, total = $total 
+                    set name = '$name', customer_id = $customer_id, product_id = $product_id, total = $total
                     where id = $id";
             $query = mysqli_query($this->con, $sql);
             if($query){
@@ -108,6 +108,14 @@
             else{
                 return "Error: " . $sql . "<br>" . mysqli_error($this->con);
             }
+        }
+        public function statistics($month, $year){
+            $sql = "select o.status, count(*) as total 
+                    from orders o 
+                    where isDeleted = 0 and (YEAR(o.createdDate) = $year AND MONTH(o.createdDate) = $month)
+                    group by o.status";
+            $query = mysqli_query($this->con, $sql);
+            return $query;
         }
     }
 ?>

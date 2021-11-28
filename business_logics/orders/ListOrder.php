@@ -30,7 +30,8 @@
              'status' => $row['status'],
              'total' => $row['total'],
              'createdDate' => $row['createdDate'],
-             'url' => $row['url']
+             'url' => $row['url'],
+             'price' => $row['price']
          );
      }
      //divide data
