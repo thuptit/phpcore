@@ -11,11 +11,11 @@
         </div>
     </div>
 <script>
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl,{
-    'customClass': 'custom-tooltip'
-  })
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl,{
+        'customClass': 'custom-tooltip'
+    })
 })
 </script>
 <script src="../../../orderpurephp/assets/js/jquery.3.4.1.js"></script>

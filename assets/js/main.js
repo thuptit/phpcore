@@ -517,8 +517,6 @@ function updateOrder() {
   });
 }
 
-
-
 function calculatorMoney(price, total){
   let money = parseInt(price)*parseInt(total);
   return (
